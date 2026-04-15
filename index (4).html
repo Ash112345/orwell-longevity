@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orwell Longevity</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@200;300;400&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Variables ── */
+    :root {
+      --navy:      #050D1A;
+      --navy-mid:  #0A1828;
+      --gold-hi:   #F5E4A0;
+      --gold-lt:   #E8C97A;
+      --gold:      #D4AA6A;
+      --gold-warm: #C9A96E;
+      --gold-term: #B8935E;
+      --gold-dk:   #A8864A;
+      --cream:     #F0E6D0;
+      --text-dim:  rgba(240,230,208,0.45);
+      --rule:      rgba(201,169,110,0.18);
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--navy);
+      color: var(--cream);
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 15px;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* ── Noise grain overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.025;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* ── Utilities ── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+    .rule {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 0;
+    }
+    .gold { color: var(--gold-warm); }
+    .label {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold-term);
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 24px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to bottom, rgba(5,13,26,0.96) 0%, transparent 100%);
+    }
+    .nav-wordmark {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .nav-wordmark span:first-child {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 18px;
+      letter-spacing: 0.35em;
+      color: var(--cream);
+    }
+    .nav-wordmark span:last-child {
+      font-family: 'Jost', sans-serif;
+      font-weight: 200;
+      font-size: 8px;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold-warm);
+    }
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--cream); }
+    .nav-cta {
+      font-size: 10px;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--navy);
+      background: var(--gold-warm);
+      padding: 10px 24px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    .nav-cta:hover { background: var(--gold-lt); }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding-bottom: 100px;
+      position: relative;
+      overflow: hidden;
+    }
+    /* Radial glow */
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 15%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(ellipse at center,
+        rgba(201,169,110,0.07) 0%,
+        transparent 70%);
+      pointer-events: none;
+    }
+    /* Heartbeat line */
+    .hero-ecg {
+      position: absolute;
+      top: 42%;
+      left: 0;
+      right: 0;
+      height: 80px;
+      opacity: 0.12;
+      overflow: hidden;
+    }
+    .hero-ecg svg {
+      width: 100%;
+      height: 100%;
+    }
+    .ecg-path {
+      stroke: var(--gold-warm);
+      stroke-width: 1.2;
+      fill: none;
+      stroke-dasharray: 2000;
+      stroke-dashoffset: 2000;
+      animation: drawEcg 3s ease forwards 0.8s;
+    }
+    @keyframes drawEcg {
+      to { stroke-dashoffset: 0; }
+    }
+
+    .hero-eyebrow {
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(52px, 7vw, 96px);
+      line-height: 1.0;
+      letter-spacing: 0.02em;
+      color: var(--cream);
+      max-width: 820px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--gold-lt);
+    }
+    .hero-sub {
+      margin-top: 32px;
+      max-width: 460px;
+      font-size: 14px;
+      color: var(--text-dim);
+      line-height: 1.75;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+    .hero-actions {
+      margin-top: 48px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.8s;
+    }
+    .btn-primary {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--navy);
+      background: var(--gold-warm);
+      padding: 16px 40px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    .btn-primary:hover { background: var(--gold-lt); }
+    .btn-ghost {
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      text-decoration: none;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 2px;
+      transition: color 0.3s;
+    }
+    .btn-ghost:hover { color: var(--cream); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 32px 0;
+    }
+    .stats-inner {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .stat {
+      padding: 0 40px;
+      border-right: 1px solid var(--rule);
+    }
+    .stat:first-child { padding-left: 0; }
+    .stat:last-child { border-right: none; }
+    .stat-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 42px;
+      font-weight: 300;
+      color: var(--gold-warm);
+      line-height: 1;
+    }
+    .stat-label {
+      margin-top: 6px;
+      font-size: 11px;
+      font-weight: 300;
+      letter-spacing: 0.12em;
+      color: var(--text-dim);
+    }
+
+    /* ── Section shared ── */
+    section { padding: 100px 0; }
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+    .section-header h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(34px, 4vw, 52px);
+      line-height: 1.1;
+      letter-spacing: 0.02em;
+      color: var(--cream);
+    }
+
+    /* ── Assessment section ── */
+    .assess-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--rule);
+      border: 1px solid var(--rule);
+    }
+    .assess-card {
+      background: var(--navy);
+      padding: 48px 40px;
+      position: relative;
+      transition: background 0.3s;
+    }
+    .assess-card:hover { background: var(--navy-mid); }
+    .assess-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 72px;
+      font-weight: 300;
+      color: rgba(201,169,110,0.1);
+      line-height: 1;
+      position: absolute;
+      top: 24px;
+      right: 32px;
+    }
+    .assess-icon {
+      width: 32px;
+      height: 32px;
+      margin-bottom: 24px;
+      color: var(--gold-warm);
+    }
+    .assess-card h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-size: 24px;
+      color: var(--cream);
+      margin-bottom: 12px;
+    }
+    .assess-card p {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.75;
+    }
+
+    /* ── How it works ── */
+    .how-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .how-step {
+      padding: 0 48px 0 0;
+      border-right: 1px solid var(--rule);
+      margin-right: 48px;
+    }
+    .how-step:last-child {
+      border-right: none;
+      margin-right: 0;
+      padding-right: 0;
+    }
+    .step-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--gold-term);
+      letter-spacing: 0.15em;
+      margin-bottom: 24px;
+    }
+    .how-step h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 400;
+      font-size: 22px;
+      color: var(--cream);
+      margin-bottom: 14px;
+    }
+    .how-step p {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.8;
+    }
+
+    /* ── Partners ── */
+    .partners-section { padding: 80px 0; }
+    .partners-row {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+      flex-wrap: wrap;
+    }
+    .partner-pill {
+      font-size: 11px;
+      font-weight: 200;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border: 1px solid var(--rule);
+      padding: 10px 24px;
+    }
+
+    /* ── CTA strip ── */
+    .cta-strip {
+      background: var(--navy-mid);
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      padding: 80px 0;
+    }
+    .cta-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+    }
+    .cta-copy h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(32px, 3.5vw, 48px);
+      line-height: 1.1;
+      color: var(--cream);
+      max-width: 540px;
+    }
+    .cta-copy h2 em {
+      font-style: italic;
+      color: var(--gold-lt);
+    }
+    .cta-copy p {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    /* ── Footer ── */
+    footer {
+      padding: 60px 0;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 40px;
+    }
+    .footer-brand span:first-child {
+      display: block;
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 20px;
+      letter-spacing: 0.3em;
+      color: var(--cream);
+    }
+    .footer-brand span:last-child {
+      display: block;
+      font-size: 9px;
+      font-weight: 200;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold-warm);
+      margin-top: 3px;
+    }
+    .footer-note {
+      font-size: 11px;
+      color: var(--text-dim);
+      max-width: 380px;
+      line-height: 1.7;
+    }
+    .footer-bottom {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--text-dim);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      nav { padding: 20px 24px; }
+      .nav-links, .nav-cta { display: none; }
+      .container { padding: 0 24px; }
+      .stats-inner { grid-template-columns: 1fr 1fr; }
+      .stat { border-right: none; border-bottom: 1px solid var(--rule); padding: 16px 0; }
+      .assess-grid { grid-template-columns: 1fr; }
+      .how-steps { grid-template-columns: 1fr; gap: 40px; }
+      .how-step { border-right: none; padding-right: 0; margin-right: 0; border-bottom: 1px solid var(--rule); padding-bottom: 40px; }
+      .how-step:last-child { border-bottom: none; padding-bottom: 0; }
+      .cta-inner { flex-direction: column; }
+      .footer-inner { flex-direction: column; gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── Navigation ── -->
+  <nav>
+    <div class="nav-wordmark">
+      <span>ORWELL</span>
+      <span>Longevity</span>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#assessment">Assessment</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#partners">Partners</a></li>
+    </ul>
+    <a href="#book" class="nav-cta">Book Assessment</a>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <section class="hero">
+    <!-- ECG trace -->
+    <div class="hero-ecg">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+        <path class="ecg-path" d="
+          M0,40 L100,40 L120,40 L130,20 L140,60 L150,10 L160,70 L170,40 L190,40
+          L310,40 L330,40 L340,20 L350,60 L360,10 L370,70 L380,40 L400,40
+          L520,40 L540,40 L550,20 L560,60 L570,10 L580,70 L590,40 L610,40
+          L730,40 L750,40 L760,20 L770,60 L780,10 L790,70 L800,40 L820,40
+          L940,40 L960,40 L970,20 L980,60 L990,10 L1000,70 L1010,40 L1030,40
+          L1150,40 L1170,40 L1180,20 L1190,60 L1200,10 L1210,70 L1220,40 L1240,40
+          L1360,40 L1380,40 L1390,20 L1400,60 L1410,10 L1420,70 L1430,40 L1440,40
+        "/>
+      </svg>
+    </div>
+
+    <div class="container">
+      <p class="label hero-eyebrow">Cardiovascular Risk Assessment · London</p>
+      <h1>Know your heart.<br><em>Before it speaks</em><br>for itself.</h1>
+      <p class="hero-sub">
+        A precision cardiovascular assessment delivered on-site — no waiting lists, no referrals. 
+        Clinical-grade insight in under an hour.
+      </p>
+      <div class="hero-actions">
+        <a href="#book" class="btn-primary">Book an Assessment</a>
+        <a href="#how" class="btn-ghost">How It Works</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Stats bar ── -->
+  <div class="stats-bar">
+    <div class="container">
+      <div class="stats-inner">
+        <div class="stat">
+          <div class="stat-number">45 min</div>
+          <div class="stat-label">Assessment duration</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">12+</div>
+          <div class="stat-label">Cardiovascular markers</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">Same day</div>
+          <div class="stat-label">Results & report</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number">No GP</div>
+          <div class="stat-label">Referral required</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Assessment section ── -->
+  <section id="assessment">
+    <div class="container">
+      <div class="section-header">
+        <p class="label">01 / What We Measure</p>
+        <h2>A complete picture<br>of cardiovascular risk</h2>
+      </div>
+      <div class="assess-grid">
+        <div class="assess-card">
+          <span class="assess-num">01</span>
+          <svg class="assess-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2">
+            <path d="M16 28s-12-8-12-16a8 8 0 0 1 12-6.93A8 8 0 0 1 28 12c0 8-12 16-12 16z"/>
+          </svg>
+          <h3>Resting ECG</h3>
+          <p>12-lead electrocardiogram capturing electrical activity at rest, analysed on-site with immediate interpretation.</p>
+        </div>
+        <div class="assess-card">
+          <span class="assess-num">02</span>
+          <svg class="assess-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2">
+            <circle cx="16" cy="16" r="12"/><path d="M16 8v8l4 4"/>
+          </svg>
+          <h3>Blood Pressure Profile</h3>
+          <p>Multi-reading protocol across both arms. Ambulatory patterns and pulse pressure analysis.</p>
+        </div>
+        <div class="assess-card">
+          <span class="assess-num">03</span>
+          <svg class="assess-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2">
+            <path d="M4 16h24M16 4v24"/>
+          </svg>
+          <h3>Arterial Stiffness</h3>
+          <p>Pulse wave velocity measurement — a key predictor of future cardiovascular events, rarely available outside hospital settings.</p>
+        </div>
+        <div class="assess-card">
+          <span class="assess-num">04</span>
+          <svg class="assess-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.2">
+            <rect x="4" y="10" width="24" height="14" rx="2"/><path d="M10 10V8a2 2 0 0 1 4 0v2M18 10V8a2 2 0 0 1 4 0v2"/>
+          </svg>
+          <h3>Partner Lab Network</h3>
+          <p>Seamless referrals for lipid panels, inflammation markers, HbA1c and extended bloods through our accredited partner laboratories.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ── How it works ── -->
+  <section id="how">
+    <div class="container">
+      <div class="section-header">
+        <p class="label">02 / Process</p>
+        <h2>Simple, fast,<br>actionable</h2>
+      </div>
+      <div class="how-steps">
+        <div class="how-step">
+          <p class="step-num">Step 01</p>
+          <h3>Book Online</h3>
+          <p>Select a time and location. We come to you — clinic, office or home. No preparation required for the on-site assessment.</p>
+        </div>
+        <div class="how-step">
+          <p class="step-num">Step 02</p>
+          <h3>On-Site Assessment</h3>
+          <p>A clinician conducts your full cardiovascular screen. Typically under 45 minutes. All equipment is portable and clinical-grade.</p>
+        </div>
+        <div class="how-step">
+          <p class="step-num">Step 03</p>
+          <h3>Your Report</h3>
+          <p>A personalised risk report delivered the same day. Clear scores, benchmarks, and recommended next steps — in plain language.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="rule" />
+
+  <!-- ── Partners ── -->
+  <section id="partners" class="partners-section">
+    <div class="container">
+      <p class="label" style="margin-bottom: 32px;">03 / Partner Network</p>
+      <p style="font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 300; color: var(--text-dim); max-width: 600px; line-height: 1.6; margin-bottom: 40px;">
+        Where further investigation is indicated, we work with a curated network of CQC-registered laboratories and specialist clinics.
+      </p>
+      <div class="partners-row">
+        <div class="partner-pill">Lipid Diagnostics</div>
+        <div class="partner-pill">Cardiology Imaging</div>
+        <div class="partner-pill">Haematology Labs</div>
+        <div class="partner-pill">Specialist Referrals</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA strip ── -->
+  <div id="book" class="cta-strip">
+    <div class="container">
+      <div class="cta-inner">
+        <div class="cta-copy">
+          <h2>The most important<br>test you'll take <em>this year.</em></h2>
+          <p>Cardiovascular disease is largely preventable — when you know your numbers.</p>
+        </div>
+        <div>
+          <a href="#" class="btn-primary" style="font-size: 12px; padding: 18px 48px;">Book Your Assessment</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <span>ORWELL</span>
+          <span>Longevity</span>
+        </div>
+        <p class="footer-note">
+          Orwell Longevity provides non-invasive cardiovascular screening. We are not a diagnostic service and do not replace your GP. All findings are communicated alongside recommendations to seek appropriate clinical follow-up where indicated.
+        </p>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 Orwell Longevity</span>
+        <span>London, UK</span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
